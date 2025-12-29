@@ -1,8 +1,6 @@
 package kyj.schedule_manage.service;
 
-import kyj.schedule_manage.dto.CreateScheduleRequest;
-import kyj.schedule_manage.dto.CreateScheduleResponse;
-import kyj.schedule_manage.dto.GetScheduleResponse;
+import kyj.schedule_manage.dto.*;
 import kyj.schedule_manage.entity.Schedule;
 import kyj.schedule_manage.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -52,5 +50,19 @@ public class ScheduleService {
                         , schedule.getCreateAt()
                         , schedule.getUpdateAt()))
                 .toList();
+    }
+
+    @Transactional
+    public UpdateScheduleResponse updateSchedule(long id, UpdateScheduleRequest request) {
+        Schedule getSchedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalStateException("존재하지 않는 일정입니다"));
+        getSchedule.update(request.title(), request.content(), request.author(), request.pwd());
+
+        return new UpdateScheduleResponse(
+                getSchedule.getId()
+                , getSchedule.getTitle()
+                , getSchedule.getContent()
+                , getSchedule.getAuthor()
+                , getSchedule.getCreateAt()
+                , getSchedule.getUpdateAt());
     }
 }

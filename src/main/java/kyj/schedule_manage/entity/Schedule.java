@@ -29,9 +29,21 @@ public class Schedule extends Base {
         this.pwd = pwd;
     }
 
-    public void update(String title, String content, String pwd) {
-        this.title = title;
-        this.content = content;
-        this.pwd = pwd;
+    public void update(String title, String content, String author, String pwd) {
+        if(title != null) {
+            this.title = title;
+        }
+
+        if(content != null) {
+            this.content = content;
+        }
+
+        if(author != null) {
+            this.author = author;
+        }
+
+        if(pwd != null) {
+            this.pwd = pwd;
+        }
     }
 }

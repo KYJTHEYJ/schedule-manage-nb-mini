@@ -1,8 +1,6 @@
 package kyj.schedule_manage.controller;
 
-import kyj.schedule_manage.dto.CreateScheduleRequest;
-import kyj.schedule_manage.dto.CreateScheduleResponse;
-import kyj.schedule_manage.dto.GetScheduleResponse;
+import kyj.schedule_manage.dto.*;
 import kyj.schedule_manage.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,8 +15,8 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping("/schedules")
-    public ResponseEntity<CreateScheduleResponse> createSchedule(@RequestBody CreateScheduleRequest createScheduleRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.createSchedule(createScheduleRequest));
+    public ResponseEntity<CreateScheduleResponse> createSchedule(@RequestBody CreateScheduleRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.createSchedule(request));
     }
 
     @GetMapping("/schedules/{id}")
@@ -29,5 +27,16 @@ public class ScheduleController {
     @GetMapping("/schedules")
     public ResponseEntity<List<GetScheduleResponse>> getAllSchedule() {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getAllSchedule());
+    }
+
+    // 수정 부는 record 클래스 사용
+    @PutMapping("/schedules/{id}")
+    public ResponseEntity<UpdateScheduleResponse> updateSchedule(@PathVariable Long id, @RequestBody UpdateScheduleRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.updateSchedule(id, request));
+    }
+
+    @PatchMapping("/schedules/{id}")
+    public ResponseEntity<UpdateScheduleResponse> updatePortionSchedule(@PathVariable Long id, @RequestBody UpdateScheduleRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.updateSchedule(id, request));
     }
 }
