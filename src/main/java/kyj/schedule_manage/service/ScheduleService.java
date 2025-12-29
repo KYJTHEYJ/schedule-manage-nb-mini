@@ -1,7 +1,9 @@
 package kyj.schedule_manage.service;
 
 import kyj.schedule_manage.dto.*;
+import kyj.schedule_manage.entity.Comment;
 import kyj.schedule_manage.entity.Schedule;
+import kyj.schedule_manage.repository.CommentRepository;
 import kyj.schedule_manage.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,11 +15,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
+    private final CommentRepository commentRepository;
 
     public Schedule checkPwd(long id, String pwd) {
         Schedule getSchedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalStateException("존재하지 않는 일정입니다"));
 
-        if(!pwd.equals(getSchedule.getPwd())) {
+        if (!pwd.equals(getSchedule.getPwd())) {
             throw new IllegalStateException("비밀번호가 틀립니다");
         }
 
@@ -40,13 +43,24 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public GetScheduleResponse getSchedule(long id) {
         Schedule getSchedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalStateException("존재하지 않는 일정입니다"));
+        List<GetCommentResponse> commentResponseList = commentRepository.findByScheduleId(getSchedule.getId()).stream()
+                .map(comment -> new GetCommentResponse(
+                        comment.getId()
+                        , comment.getScheduleId()
+                        , comment.getContent()
+                        , comment.getAuthor()
+                        , comment.getCreateAt()
+                        , comment.getUpdateAt())
+                ).toList();
+
         return new GetScheduleResponse(
                 getSchedule.getId()
                 , getSchedule.getTitle()
                 , getSchedule.getContent()
                 , getSchedule.getAuthor()
                 , getSchedule.getCreateAt()
-                , getSchedule.getUpdateAt());
+                , getSchedule.getUpdateAt()
+                , commentResponseList);
     }
 
     @Transactional(readOnly = true)
@@ -58,8 +72,17 @@ public class ScheduleService {
                         , schedule.getContent()
                         , schedule.getAuthor()
                         , schedule.getCreateAt()
-                        , schedule.getUpdateAt()))
-                .toList();
+                        , schedule.getUpdateAt()
+                        , commentRepository.findByScheduleId(schedule.getId()).stream()
+                        .map(comment -> new GetCommentResponse(
+                                comment.getId()
+                                , comment.getScheduleId()
+                                , comment.getContent()
+                                , comment.getAuthor()
+                                , comment.getCreateAt()
+                                , comment.getUpdateAt())
+                        ).toList())
+                ).toList();
     }
 
     @Transactional
