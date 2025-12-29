@@ -65,4 +65,27 @@ public class ScheduleService {
                 , getSchedule.getCreateAt()
                 , getSchedule.getUpdateAt());
     }
+
+    @Transactional
+    public UpdateScheduleResponse patchSchedule(long id, UpdateScheduleRequest request) {
+        Schedule getSchedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalStateException("존재하지 않는 일정입니다"));
+        getSchedule.patch(request.title(), request.content(), request.author(), request.pwd());
+
+        return new UpdateScheduleResponse(
+                getSchedule.getId()
+                , getSchedule.getTitle()
+                , getSchedule.getContent()
+                , getSchedule.getAuthor()
+                , getSchedule.getCreateAt()
+                , getSchedule.getUpdateAt());
+    }
+
+    @Transactional
+    public void deleteSchedule(long id) {
+        if(!scheduleRepository.existsById(id)) {
+            throw new IllegalStateException("존재하지 않는 일정입니다");
+        }
+
+        scheduleRepository.deleteById(id);
+    }
 }

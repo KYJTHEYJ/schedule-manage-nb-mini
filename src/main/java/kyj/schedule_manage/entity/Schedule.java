@@ -30,6 +30,13 @@ public class Schedule extends Base {
     }
 
     public void update(String title, String content, String author, String pwd) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
+        this.pwd = pwd;
+    }
+
+    public void patch(String title, String content, String author, String pwd) {
         if(title != null) {
             this.title = title;
         }
