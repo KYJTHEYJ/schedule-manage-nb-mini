@@ -4,6 +4,7 @@ import kyj.schedule_manage.dto.CreateCommentRequest;
 import kyj.schedule_manage.dto.CreateCommentResponse;
 import kyj.schedule_manage.entity.Comment;
 import kyj.schedule_manage.repository.CommentRepository;
+import kyj.schedule_manage.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,14 +12,44 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final ScheduleRepository scheduleRepository;
 
-    public CreateCommentResponse createComment(long scheduleId, CreateCommentRequest request) {
-        Comment comment = new Comment(scheduleId, request.getContent(), request.getAuthor(), request.getPwd());
+    private void checkCommentContentLength(String content) {
+        if(content.length() > 100) {
+            throw new IllegalStateException("내용은 100자 까지 작성 가능합니다");
+        }
+    }
 
+    private void checkEmptyToCreateComment(String content, String author, String pwd) {
+        if(content.isEmpty()) {
+            throw new IllegalStateException("내용은 필수입니다");
+        }
+
+        if(author.isEmpty()) {
+            throw new IllegalStateException("작성자는 필수입니다");
+        }
+
+        if(pwd.isEmpty()) {
+            throw new IllegalStateException("비밀번호는 필수입니다");
+        }
+    }
+
+    private void checkCommentCount(long scheduleId) {
         if(commentRepository.findByScheduleId(scheduleId).stream().count() >= 10) {
             throw new IllegalStateException("일정엔 10개까지의 댓글만 작성 가능합니다");
         }
+    }
 
+    public CreateCommentResponse createComment(long scheduleId, CreateCommentRequest request) {
+        if(!scheduleRepository.existsById(scheduleId)) {
+            throw new IllegalStateException("댓글을 입력하는 일정이 없습니다");
+        }
+
+        checkCommentCount(scheduleId);
+        checkCommentContentLength(request.getContent());
+        checkEmptyToCreateComment(request.getContent(), request.getAuthor(), request.getPwd());
+
+        Comment comment = new Comment(scheduleId, request.getContent(), request.getAuthor(), request.getPwd());
         Comment createdComment = commentRepository.save(comment);
 
         return new CreateCommentResponse(

@@ -1,7 +1,6 @@
 package kyj.schedule_manage.service;
 
 import kyj.schedule_manage.dto.*;
-import kyj.schedule_manage.entity.Comment;
 import kyj.schedule_manage.entity.Schedule;
 import kyj.schedule_manage.repository.CommentRepository;
 import kyj.schedule_manage.repository.ScheduleRepository;
@@ -17,20 +16,55 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final CommentRepository commentRepository;
 
-    public Schedule checkPwd(long id, String pwd) {
+    private Schedule checkSchedulePwd(long id, String pwd) {
         Schedule getSchedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalStateException("존재하지 않는 일정입니다"));
 
         if (!pwd.equals(getSchedule.getPwd())) {
-            throw new IllegalStateException("비밀번호가 틀립니다");
+            throw new IllegalStateException("등록한 일정의 비밀번호와 일치하지 않습니다");
         }
 
         return getSchedule;
     }
 
+    private void checkEmptyToCreateSchedule(String title, String content, String author, String pwd) {
+        if(title.isEmpty()) {
+            throw new IllegalStateException("제목은 필수입니다");
+        }
+
+        if(content.isEmpty()) {
+            throw new IllegalStateException("내용은 필수입니다");
+        }
+
+        if(author.isEmpty()) {
+            throw new IllegalStateException("작성자는 필수입니다");
+        }
+
+        if(pwd.isEmpty()) {
+            throw new IllegalStateException("비밀번호는 필수입니다");
+        }
+    }
+
+    private void checkScheduleTitleLength(String title) {
+        if(title.length() > 30) {
+            throw new IllegalStateException("제목은 30자 까지 작성 가능합니다");
+        }
+    }
+
+    private void checkScheduleContentLength(String content) {
+        if(content.length() > 200) {
+            throw new IllegalStateException("내용은 200자 까지 작성 가능합니다");
+        }
+    }
+
     @Transactional
     public CreateScheduleResponse createSchedule(CreateScheduleRequest request) {
+        checkEmptyToCreateSchedule(request.getTitle(), request.getContent(), request.getAuthor(), request.getPwd());
+        checkScheduleTitleLength(request.getTitle());
+        checkScheduleContentLength(request.getContent());
+
         Schedule schedule = new Schedule(request.getTitle(), request.getContent(), request.getAuthor(), request.getPwd());
         Schedule createdSchedule = scheduleRepository.save(schedule);
+
         return new CreateScheduleResponse(
                 createdSchedule.getId()
                 , createdSchedule.getTitle()
@@ -87,7 +121,10 @@ public class ScheduleService {
 
     @Transactional
     public UpdateScheduleResponse updateSchedule(long id, UpdateScheduleRequest request) {
-        Schedule getSchedule = checkPwd(id, request.pwd());
+        checkScheduleTitleLength(request.title());
+        checkScheduleContentLength(request.content());
+
+        Schedule getSchedule = checkSchedulePwd(id, request.pwd());
         getSchedule.update(request.title(), request.content());
 
         return new UpdateScheduleResponse(
@@ -101,7 +138,10 @@ public class ScheduleService {
 
     @Transactional
     public UpdateScheduleResponse patchSchedule(long id, UpdateScheduleRequest request) {
-        Schedule getSchedule = checkPwd(id, request.pwd());
+        checkScheduleTitleLength(request.title());
+        checkScheduleContentLength(request.content());
+
+        Schedule getSchedule = checkSchedulePwd(id, request.pwd());
         getSchedule.patch(request.title(), request.content());
 
         return new UpdateScheduleResponse(
@@ -115,7 +155,7 @@ public class ScheduleService {
 
     @Transactional
     public void deleteSchedule(long id, DeleteScheduleRequest request) {
-        Schedule getSchedule = checkPwd(id, request.pwd());
+        Schedule getSchedule = checkSchedulePwd(id, request.pwd());
         scheduleRepository.delete(getSchedule);
     }
 }

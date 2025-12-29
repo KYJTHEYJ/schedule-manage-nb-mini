@@ -13,13 +13,13 @@ public class Schedule extends Base {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false, length = 90)
     private String title;
-    @Column(length = 600)
+    @Column(nullable = false, length = 600)
     private String content;
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
     private String author;
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
     private String pwd;
 
     public Schedule(String title, String content, String author, String pwd) {

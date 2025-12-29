@@ -13,9 +13,13 @@ public class Comment extends Base {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private Long scheduleId;
+    @Column(nullable = false, length = 300)
     private String content;
+    @Column(nullable = false)
     private String author;
+    @Column(nullable = false)
     private String pwd;
 
     public Comment(Long scheduleId, String content, String author, String pwd) {
@@ -23,9 +27,5 @@ public class Comment extends Base {
         this.content = content;
         this.author = author;
         this.pwd = pwd;
-    }
-
-    public void update(String content) {
-        this.content = content;
     }
 }
