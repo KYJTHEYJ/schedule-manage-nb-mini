@@ -176,4 +176,7 @@ gradle-app.setting
 # Java heap dump
 *.hprof
 
+### Profile ###
+/src/main/resources/application-local.properties
+
 # End of https://www.toptal.com/developers/gitignore/api/java,git,macos,gradle,intellij
