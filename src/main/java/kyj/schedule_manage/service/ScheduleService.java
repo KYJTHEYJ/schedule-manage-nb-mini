@@ -146,8 +146,13 @@ public class ScheduleService {
 
     @Transactional
     public UpdateScheduleResponse patchSchedule(long id, UpdateScheduleRequest request) {
-        checkScheduleTitleLength(request.title());
-        checkScheduleContentLength(request.content());
+        if (request.title() != null) {
+            checkScheduleTitleLength(request.title());
+        }
+
+        if (request.content() != null) {
+            checkScheduleContentLength(request.content());
+        }
 
         Schedule getSchedule = checkSchedulePwd(id, request.pwd());
         getSchedule.patch(request.title(), request.content());
