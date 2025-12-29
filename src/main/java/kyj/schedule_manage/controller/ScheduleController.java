@@ -28,8 +28,8 @@ public class ScheduleController {
     }
 
     @GetMapping("/schedules")
-    public ResponseEntity<List<GetScheduleResponse>> getAllSchedule() {
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getAllSchedule());
+    public ResponseEntity<List<GetScheduleResponse>> getAllSchedule(@RequestParam(required = false) String author) {
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getAllSchedule(author));
     }
 
     // 수정 부는 record 클래스 사용

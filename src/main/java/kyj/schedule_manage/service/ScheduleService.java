@@ -1,6 +1,7 @@
 package kyj.schedule_manage.service;
 
 import kyj.schedule_manage.dto.*;
+import kyj.schedule_manage.entity.Comment;
 import kyj.schedule_manage.entity.Schedule;
 import kyj.schedule_manage.repository.CommentRepository;
 import kyj.schedule_manage.repository.ScheduleRepository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +18,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final CommentRepository commentRepository;
 
+    //region 유효성 검사
     private Schedule checkSchedulePwd(long id, String pwd) {
         Schedule getSchedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalStateException("존재하지 않는 일정입니다"));
 
@@ -27,34 +30,35 @@ public class ScheduleService {
     }
 
     private void checkEmptyToCreateSchedule(String title, String content, String author, String pwd) {
-        if(title.isEmpty()) {
+        if (title.isEmpty()) {
             throw new IllegalStateException("제목은 필수입니다");
         }
 
-        if(content.isEmpty()) {
+        if (content.isEmpty()) {
             throw new IllegalStateException("내용은 필수입니다");
         }
 
-        if(author.isEmpty()) {
+        if (author.isEmpty()) {
             throw new IllegalStateException("작성자는 필수입니다");
         }
 
-        if(pwd.isEmpty()) {
+        if (pwd.isEmpty()) {
             throw new IllegalStateException("비밀번호는 필수입니다");
         }
     }
 
     private void checkScheduleTitleLength(String title) {
-        if(title.length() > 30) {
+        if (title.length() > 30) {
             throw new IllegalStateException("제목은 30자 까지 작성 가능합니다");
         }
     }
 
     private void checkScheduleContentLength(String content) {
-        if(content.length() > 200) {
+        if (content.length() > 200) {
             throw new IllegalStateException("내용은 200자 까지 작성 가능합니다");
         }
     }
+    //endregion
 
     @Transactional
     public CreateScheduleResponse createSchedule(CreateScheduleRequest request) {
@@ -98,25 +102,29 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public List<GetScheduleResponse> getAllSchedule() {
-        return scheduleRepository.findAll().stream()
-                .map(schedule -> new GetScheduleResponse(
-                        schedule.getId()
-                        , schedule.getTitle()
-                        , schedule.getContent()
-                        , schedule.getAuthor()
-                        , schedule.getCreateAt()
-                        , schedule.getUpdateAt()
-                        , commentRepository.findByScheduleId(schedule.getId()).stream()
-                        .map(comment -> new GetCommentResponse(
-                                comment.getId()
-                                , comment.getScheduleId()
-                                , comment.getContent()
-                                , comment.getAuthor()
-                                , comment.getCreateAt()
-                                , comment.getUpdateAt())
-                        ).toList())
-                ).toList();
+    public List<GetScheduleResponse> getAllSchedule(String author) {
+        List<Schedule> scheduleList;
+
+        if (author != null) {
+            scheduleList = scheduleRepository.findAll().stream().filter(schedule -> schedule.getAuthor().equals(author)).toList();
+        } else {
+            scheduleList = scheduleRepository.findAll();
+        }
+
+        return scheduleList.stream().map(schedule -> new GetScheduleResponse(
+                schedule.getId()
+                , schedule.getTitle()
+                , schedule.getContent()
+                , schedule.getAuthor()
+                , schedule.getCreateAt()
+                , schedule.getUpdateAt()
+                , commentRepository.findByScheduleId(schedule.getId()).stream().map(comment -> new GetCommentResponse(
+                comment.getId()
+                , comment.getScheduleId()
+                , comment.getContent()
+                , comment.getAuthor()
+                , comment.getCreateAt()
+                , comment.getUpdateAt())).toList())).toList();
     }
 
     @Transactional
