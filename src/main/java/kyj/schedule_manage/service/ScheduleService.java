@@ -14,6 +14,16 @@ import java.util.List;
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
 
+    public Schedule checkPwd(long id, String pwd) {
+        Schedule getSchedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalStateException("존재하지 않는 일정입니다"));
+
+        if(!pwd.equals(getSchedule.getPwd())) {
+            throw new IllegalStateException("비밀번호가 틀립니다");
+        }
+
+        return getSchedule;
+    }
+
     @Transactional
     public CreateScheduleResponse createSchedule(CreateScheduleRequest request) {
         Schedule schedule = new Schedule(request.getTitle(), request.getContent(), request.getAuthor(), request.getPwd());
@@ -54,8 +64,8 @@ public class ScheduleService {
 
     @Transactional
     public UpdateScheduleResponse updateSchedule(long id, UpdateScheduleRequest request) {
-        Schedule getSchedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalStateException("존재하지 않는 일정입니다"));
-        getSchedule.update(request.title(), request.content(), request.author(), request.pwd());
+        Schedule getSchedule = checkPwd(id, request.pwd());
+        getSchedule.update(request.title(), request.content());
 
         return new UpdateScheduleResponse(
                 getSchedule.getId()
@@ -68,8 +78,8 @@ public class ScheduleService {
 
     @Transactional
     public UpdateScheduleResponse patchSchedule(long id, UpdateScheduleRequest request) {
-        Schedule getSchedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalStateException("존재하지 않는 일정입니다"));
-        getSchedule.patch(request.title(), request.content(), request.author(), request.pwd());
+        Schedule getSchedule = checkPwd(id, request.pwd());
+        getSchedule.patch(request.title(), request.content());
 
         return new UpdateScheduleResponse(
                 getSchedule.getId()
@@ -81,11 +91,8 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void deleteSchedule(long id) {
-        if(!scheduleRepository.existsById(id)) {
-            throw new IllegalStateException("존재하지 않는 일정입니다");
-        }
-
-        scheduleRepository.deleteById(id);
+    public void deleteSchedule(long id, DeleteScheduleRequest request) {
+        Schedule getSchedule = checkPwd(id, request.pwd());
+        scheduleRepository.delete(getSchedule);
     }
 }
