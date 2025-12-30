@@ -4,5 +4,8 @@
 https://documenter.getpostman.com/view/6724426/2sBXVbGtem
 
 # ERD
-작성 중
+> 논리적으로만 FK 연결
+<img width="415" height="426" alt="image" src="https://github.com/user-attachments/assets/2d0afbe8-3c63-4702-a232-8cc6e0ea01de" />
+
+
 
