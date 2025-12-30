@@ -47,6 +47,16 @@ public class ScheduleService {
         }
     }
 
+    private void checkEmptyToUpdateSchedule(String title, String author) {
+        if (title == null || title.isEmpty()) {
+            throw new IllegalArgumentException("제목은 필수입니다");
+        }
+
+        if (author == null || author.isEmpty()) {
+            throw new IllegalArgumentException("작성자는 필수입니다");
+        }
+    }
+
     private void checkScheduleTitleLength(String title) {
         if (title.length() > 30) {
             throw new IllegalArgumentException("제목은 30자 까지 작성 가능합니다");
@@ -129,11 +139,11 @@ public class ScheduleService {
 
     @Transactional
     public UpdateScheduleResponse updateSchedule(long id, UpdateScheduleRequest request) {
+        checkEmptyToUpdateSchedule(request.title(), request.author());
         checkScheduleTitleLength(request.title());
-        checkScheduleContentLength(request.content());
 
         Schedule getSchedule = checkSchedulePwd(id, request.pwd());
-        getSchedule.update(request.title(), request.content());
+        getSchedule.update(request.title(), request.author());
 
         return new UpdateScheduleResponse(
                 getSchedule.getId()
@@ -150,12 +160,8 @@ public class ScheduleService {
             checkScheduleTitleLength(request.title());
         }
 
-        if (request.content() != null) {
-            checkScheduleContentLength(request.content());
-        }
-
         Schedule getSchedule = checkSchedulePwd(id, request.pwd());
-        getSchedule.patch(request.title(), request.content());
+        getSchedule.patch(request.title(), request.author());
 
         return new UpdateScheduleResponse(
                 getSchedule.getId()
