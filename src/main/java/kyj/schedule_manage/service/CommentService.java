@@ -57,7 +57,6 @@ public class CommentService {
                 scheduleId
                 , createdComment.getContent()
                 , createdComment.getAuthor()
-                , createdComment.getPwd()
                 , createdComment.getCreateAt()
                 , createdComment.getUpdateAt());
     }
