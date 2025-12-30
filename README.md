@@ -4,4 +4,6 @@
 https://documenter.getpostman.com/view/6724426/2sBXVbGtem
 
 # ERD
-작성 중
+<img width="403" height="424" alt="image" src="https://github.com/user-attachments/assets/3396633f-652f-4d5d-93ba-9487fb1d4d5f" />
+
+
