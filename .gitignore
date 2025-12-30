@@ -177,6 +177,7 @@ gradle-app.setting
 *.hprof
 
 ### Profile ###
-/src/main/resources/application-local.properties
+/src/main/resources/application-*.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/java,git,macos,gradle,intellij
+
