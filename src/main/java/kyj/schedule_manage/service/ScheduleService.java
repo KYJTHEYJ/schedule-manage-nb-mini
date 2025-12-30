@@ -1,7 +1,6 @@
 package kyj.schedule_manage.service;
 
 import kyj.schedule_manage.dto.*;
-import kyj.schedule_manage.entity.Comment;
 import kyj.schedule_manage.entity.Schedule;
 import kyj.schedule_manage.repository.CommentRepository;
 import kyj.schedule_manage.repository.ScheduleRepository;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 @Service
 @RequiredArgsConstructor
@@ -84,7 +82,7 @@ public class ScheduleService {
         List<GetCommentResponse> commentResponseList = commentRepository.findByScheduleId(getSchedule.getId()).stream()
                 .map(comment -> new GetCommentResponse(
                         comment.getId()
-                        , comment.getScheduleId()
+                        , comment.getSchedule().getId()
                         , comment.getContent()
                         , comment.getAuthor()
                         , comment.getCreateAt()
@@ -120,7 +118,7 @@ public class ScheduleService {
                 , schedule.getUpdateAt()
                 , commentRepository.findByScheduleId(schedule.getId()).stream().map(comment -> new GetCommentResponse(
                 comment.getId()
-                , comment.getScheduleId()
+                , comment.getSchedule().getId()
                 , comment.getContent()
                 , comment.getAuthor()
                 , comment.getCreateAt()

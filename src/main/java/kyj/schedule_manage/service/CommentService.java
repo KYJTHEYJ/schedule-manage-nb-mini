@@ -3,6 +3,7 @@ package kyj.schedule_manage.service;
 import kyj.schedule_manage.dto.CreateCommentRequest;
 import kyj.schedule_manage.dto.CreateCommentResponse;
 import kyj.schedule_manage.entity.Comment;
+import kyj.schedule_manage.entity.Schedule;
 import kyj.schedule_manage.repository.CommentRepository;
 import kyj.schedule_manage.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,15 +42,14 @@ public class CommentService {
     }
 
     public CreateCommentResponse createComment(long scheduleId, CreateCommentRequest request) {
-        if(!scheduleRepository.existsById(scheduleId)) {
-            throw new IllegalStateException("댓글을 입력하는 일정이 없습니다");
-        }
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new IllegalStateException("댓글을 입력하는 일정이 없습니다"));
 
         checkCommentCount(scheduleId);
         checkCommentContentLength(request.getContent());
         checkEmptyToCreateComment(request.getContent(), request.getAuthor(), request.getPwd());
 
-        Comment comment = new Comment(scheduleId, request.getContent(), request.getAuthor(), request.getPwd());
+        Comment comment = new Comment(schedule, request.getContent(), request.getAuthor(), request.getPwd());
         Comment createdComment = commentRepository.save(comment);
 
         return new CreateCommentResponse(

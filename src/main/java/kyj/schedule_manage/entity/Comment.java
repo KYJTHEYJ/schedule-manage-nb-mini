@@ -12,9 +12,10 @@ import lombok.NoArgsConstructor;
 public class Comment extends Base {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(nullable = false)
-    private Long scheduleId;
+    private long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_id", nullable = false)
+    private Schedule schedule;
     @Column(nullable = false, length = 300)
     private String content;
     @Column(nullable = false)
@@ -22,8 +23,8 @@ public class Comment extends Base {
     @Column(nullable = false)
     private String pwd;
 
-    public Comment(Long scheduleId, String content, String author, String pwd) {
-        this.scheduleId = scheduleId;
+    public Comment(Schedule schedule, String content, String author, String pwd) {
+        this.schedule = schedule;
         this.content = content;
         this.author = author;
         this.pwd = pwd;

@@ -5,6 +5,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Table(name = "schedules")
@@ -21,6 +24,8 @@ public class Schedule extends Base {
     private String author;
     @Column(nullable = false)
     private String pwd;
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     public Schedule(String title, String content, String author, String pwd) {
         this.title = title;
