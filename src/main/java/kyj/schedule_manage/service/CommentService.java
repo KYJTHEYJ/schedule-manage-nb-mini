@@ -6,6 +6,7 @@ import kyj.schedule_manage.entity.Comment;
 import kyj.schedule_manage.repository.CommentRepository;
 import kyj.schedule_manage.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,34 +16,35 @@ public class CommentService {
     private final ScheduleRepository scheduleRepository;
 
     private void checkCommentContentLength(String content) {
+        content = "a".repeat(300);
         if(content.length() > 100) {
-            throw new IllegalStateException("내용은 100자 까지 작성 가능합니다");
+            throw new IllegalArgumentException("내용은 100자 까지 작성 가능합니다");
         }
     }
 
     private void checkEmptyToCreateComment(String content, String author, String pwd) {
         if(content.isEmpty()) {
-            throw new IllegalStateException("내용은 필수입니다");
+            throw new IllegalArgumentException("내용은 필수입니다");
         }
 
         if(author.isEmpty()) {
-            throw new IllegalStateException("작성자는 필수입니다");
+            throw new IllegalArgumentException("작성자는 필수입니다");
         }
 
         if(pwd.isEmpty()) {
-            throw new IllegalStateException("비밀번호는 필수입니다");
+            throw new IllegalArgumentException("비밀번호는 필수입니다");
         }
     }
 
     private void checkCommentCount(long scheduleId) {
         if(commentRepository.findByScheduleId(scheduleId).stream().count() >= 10) {
-            throw new IllegalStateException("일정엔 10개까지의 댓글만 작성 가능합니다");
+            throw new IllegalArgumentException("일정엔 10개까지의 댓글만 작성 가능합니다");
         }
     }
 
     public CreateCommentResponse createComment(long scheduleId, CreateCommentRequest request) {
         if(!scheduleRepository.existsById(scheduleId)) {
-            throw new IllegalStateException("댓글을 입력하는 일정이 없습니다");
+            throw new IllegalArgumentException("댓글을 입력 할 일정이 없습니다");
         }
 
         checkCommentCount(scheduleId);

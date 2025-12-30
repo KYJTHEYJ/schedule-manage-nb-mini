@@ -3,6 +3,8 @@ package kyj.schedule_manage.service;
 import kyj.schedule_manage.dto.*;
 import kyj.schedule_manage.entity.Comment;
 import kyj.schedule_manage.entity.Schedule;
+import kyj.schedule_manage.exception.NotFoundDataException;
+import kyj.schedule_manage.exception.NotMatchedException;
 import kyj.schedule_manage.repository.CommentRepository;
 import kyj.schedule_manage.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +22,10 @@ public class ScheduleService {
 
     //region 유효성 검사
     private Schedule checkSchedulePwd(long id, String pwd) {
-        Schedule getSchedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalStateException("존재하지 않는 일정입니다"));
+        Schedule getSchedule = scheduleRepository.findById(id).orElseThrow(() -> new NotFoundDataException("존재하지 않는 일정입니다"));
 
         if (!pwd.equals(getSchedule.getPwd())) {
-            throw new IllegalStateException("등록한 일정의 비밀번호와 일치하지 않습니다");
+            throw new NotMatchedException("등록한 일정의 비밀번호와 일치하지 않습니다");
         }
 
         return getSchedule;
@@ -31,31 +33,31 @@ public class ScheduleService {
 
     private void checkEmptyToCreateSchedule(String title, String content, String author, String pwd) {
         if (title.isEmpty()) {
-            throw new IllegalStateException("제목은 필수입니다");
+            throw new IllegalArgumentException("제목은 필수입니다");
         }
 
         if (content.isEmpty()) {
-            throw new IllegalStateException("내용은 필수입니다");
+            throw new IllegalArgumentException("내용은 필수입니다");
         }
 
         if (author.isEmpty()) {
-            throw new IllegalStateException("작성자는 필수입니다");
+            throw new IllegalArgumentException("작성자는 필수입니다");
         }
 
         if (pwd.isEmpty()) {
-            throw new IllegalStateException("비밀번호는 필수입니다");
+            throw new IllegalArgumentException("비밀번호는 필수입니다");
         }
     }
 
     private void checkScheduleTitleLength(String title) {
         if (title.length() > 30) {
-            throw new IllegalStateException("제목은 30자 까지 작성 가능합니다");
+            throw new IllegalArgumentException("제목은 30자 까지 작성 가능합니다");
         }
     }
 
     private void checkScheduleContentLength(String content) {
         if (content.length() > 200) {
-            throw new IllegalStateException("내용은 200자 까지 작성 가능합니다");
+            throw new IllegalArgumentException("내용은 200자 까지 작성 가능합니다");
         }
     }
     //endregion
@@ -80,7 +82,7 @@ public class ScheduleService {
 
     @Transactional(readOnly = true)
     public GetScheduleResponse getSchedule(long id) {
-        Schedule getSchedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalStateException("존재하지 않는 일정입니다"));
+        Schedule getSchedule = scheduleRepository.findById(id).orElseThrow(() -> new NotFoundDataException("존재하지 않는 일정입니다"));
         List<GetCommentResponse> commentResponseList = commentRepository.findByScheduleId(getSchedule.getId()).stream()
                 .map(comment -> new GetCommentResponse(
                         comment.getId()
