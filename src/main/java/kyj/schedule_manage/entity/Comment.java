@@ -22,7 +22,7 @@ public class Comment extends Base {
     @Column(nullable = false)
     private String pwd;
 
-    public Comment(Long scheduleId, String content, String author, String pwd) {
+    public Comment(long scheduleId, String content, String author, String pwd) {
         this.scheduleId = scheduleId;
         this.content = content;
         this.author = author;
