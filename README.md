@@ -238,3 +238,18 @@ url : /schedules?author=test1
 
 # Entity ERD
 <img width="403" height="424" alt="image" src="https://github.com/user-attachments/assets/3396633f-652f-4d5d-93ba-9487fb1d4d5f" />
+
+
+# 퀴즈
+1. 3 Layer Architecture(Controller, Service, Repository)를 적절히 적용했는지 확인해 보고, 왜 이러한 구조가 필요한지 작성해 주세요.
+   ```
+   3 Layer Architecture 사용함으로써 역할을 나누면
+   각 계층의 추가 사항이 있어도 계층 간에 영향이 적고 어디에 수정을 하고 보완을 할지 명확해집니다
+   또한 역할이 나누어져 있어 해당 담당의 코드의 재사용성과 유지보수성을 높힐 수 있습니다
+   ```
+2. `@RequestParam`, `@PathVariable`, `@RequestBody`가 각각 어떤 어노테이션인지, 어떤 특징을 갖고 있는지 작성해 주세요.
+   ```
+   @RequestParam 은 요청시 url 에서 작성된 쿼리 파라미터를 가져와 파라미터의 이름과 일치하면 값을 배정해줍니다
+   @PathVariable 은 url 에서 작성된 경로에 위치한 변수를 가져와 파라미터로 활용할 수 있게 해줍니다
+   @RequestBody 는 요청시 body 에 JSON 을 이용하는데, key:value 구조에 맞춰 Java 객체로 변환해 줍니다
+   ```
