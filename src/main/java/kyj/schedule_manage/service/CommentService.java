@@ -22,16 +22,16 @@ public class CommentService {
     }
 
     private void checkEmptyToCreateComment(String content, String author, String pwd) {
-        if(content.isEmpty()) {
-            throw new IllegalStateException("내용은 필수입니다");
+        if (content == null || content.isEmpty()) {
+            throw new IllegalArgumentException("내용은 필수입니다");
         }
 
-        if(author.isEmpty()) {
-            throw new IllegalStateException("작성자는 필수입니다");
+        if (author == null || author.isEmpty()) {
+            throw new IllegalArgumentException("작성자는 필수입니다");
         }
 
-        if(pwd.isEmpty()) {
-            throw new IllegalStateException("비밀번호는 필수입니다");
+        if (pwd == null || pwd.isEmpty()) {
+            throw new IllegalArgumentException("비밀번호는 필수입니다");
         }
     }
 
