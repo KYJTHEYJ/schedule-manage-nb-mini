@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 public class Comment extends Base {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
     @Column(nullable = false)
-    private Long scheduleId;
+    private long scheduleId;
     @Column(nullable = false, length = 300)
     private String content;
     @Column(nullable = false)
