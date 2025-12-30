@@ -169,6 +169,10 @@ public class ScheduleService {
     @Transactional
     public void deleteSchedule(long id, DeleteScheduleRequest request) {
         Schedule getSchedule = checkSchedulePwd(id, request.pwd());
+
+        List<Comment> getCommentList = commentRepository.findByScheduleId(getSchedule.getId());
+        commentRepository.deleteAll(getCommentList);
+
         scheduleRepository.delete(getSchedule);
     }
 }
